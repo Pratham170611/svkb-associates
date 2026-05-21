@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Lock, Mail } from 'lucide-react'
+import Link from 'next/link'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
@@ -71,7 +72,12 @@ export default function AdminLogin() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium">Password</label>
+                <Link href="/admin/forgot-password" className="text-sm text-blue-400 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
                 <Input

@@ -57,9 +57,20 @@ async function main() {
     },
   ]
 
-  // Clear existing services and create new ones
+  // Clear existing data in the correct order (dependencies first)
+  // Delete documents that reference services
+  await prisma.document.deleteMany({
+    where: {
+      serviceId: { not: null }
+    }
+  })
+
+  // Delete client services before deleting services
+  await prisma.clientService.deleteMany({})
+
+  // Now safe to delete services
   await prisma.service.deleteMany({})
-  
+
   for (const service of services) {
     await prisma.service.create({
       data: service,
@@ -90,7 +101,7 @@ async function main() {
 
   // Clear existing case studies and create new ones
   await prisma.caseStudy.deleteMany({})
-  
+
   for (const caseStudy of caseStudies) {
     await prisma.caseStudy.create({
       data: caseStudy,
@@ -127,7 +138,7 @@ async function main() {
 
   // Clear existing testimonials and create new ones
   await prisma.testimonial.deleteMany({})
-  
+
   for (const testimonial of testimonials) {
     await prisma.testimonial.create({
       data: testimonial,
@@ -169,6 +180,50 @@ async function main() {
         accentColor: '#ff6b35',
         fontHeading: 'Inter',
         fontBody: 'Inter',
+      },
+    })
+  }
+
+  // Create sample client (after services are created)
+  const clientPassword = await bcrypt.hash('client123', 10)
+  const taxService = await prisma.service.findFirst({ where: { title: 'Tax Planning & Compliance' } })
+
+  if (taxService) {
+    // First, upsert the client without nested services
+    const client = await prisma.client.upsert({
+      where: { email: 'client@example.com' },
+      update: {
+        password: clientPassword,
+        name: 'Test Client',
+        phone: '+91 9876543210',
+        company: 'Test Company Ltd.',
+        isActive: true,
+      },
+      create: {
+        email: 'client@example.com',
+        password: clientPassword,
+        name: 'Test Client',
+        phone: '+91 9876543210',
+        company: 'Test Company Ltd.',
+        isActive: true,
+      },
+    })
+
+    // Then, handle client services separately to avoid foreign key issues
+    // Delete existing services for this client and service
+    await prisma.clientService.deleteMany({
+      where: {
+        clientId: client.id,
+        serviceId: taxService.id,
+      },
+    })
+
+    // Create the client service relationship
+    await prisma.clientService.create({
+      data: {
+        clientId: client.id,
+        serviceId: taxService.id,
+        status: 'active',
       },
     })
   }

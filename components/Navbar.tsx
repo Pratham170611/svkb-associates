@@ -23,23 +23,26 @@ export default function Navbar() {
     }`}>
       <div className="container px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <Link href="/" className="text-2xl font-bold text-slate-900">
+          <Link href="/" className={`text-2xl font-bold transition-colors ${scrolled ? 'text-slate-900' : 'text-white'}`}>
             SVKB Associates
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
-            <Link href="#services" className="text-slate-700 hover:text-blue-600 transition-colors">
+            <Link href="#services" className={`${scrolled ? 'text-slate-700' : 'text-slate-200'} hover:text-blue-600 transition-colors`}>
               Services
             </Link>
-            <Link href="#about" className="text-slate-700 hover:text-blue-600 transition-colors">
+            <Link href="#about" className={`${scrolled ? 'text-slate-700' : 'text-slate-200'} hover:text-blue-600 transition-colors`}>
               About
             </Link>
-            <Link href="#case-studies" className="text-slate-700 hover:text-blue-600 transition-colors">
+            <Link href="#case-studies" className={`${scrolled ? 'text-slate-700' : 'text-slate-200'} hover:text-blue-600 transition-colors`}>
               Case Studies
             </Link>
-            <Link href="#testimonials" className="text-slate-700 hover:text-blue-600 transition-colors">
+            <Link href="#testimonials" className={`${scrolled ? 'text-slate-700' : 'text-slate-200'} hover:text-blue-600 transition-colors`}>
               Testimonials
+            </Link>
+            <Link href="/client/login" className={`${scrolled ? 'text-slate-700' : 'text-slate-200'} hover:text-blue-600 transition-colors`}>
+              Login
             </Link>
             <Button asChild>
               <Link href="#booking">Book Consultation</Link>
@@ -48,7 +51,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-slate-900"
+            className={`md:hidden ${scrolled ? 'text-slate-900' : 'text-white'}`}
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -57,7 +60,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden pb-4 space-y-4">
+          <div className="md:hidden pb-4 pt-2 space-y-4 bg-white/95 backdrop-blur-sm px-4 rounded-b-lg shadow-lg absolute top-20 left-0 right-0">
             <Link href="#services" className="block text-slate-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
               Services
             </Link>
@@ -69,6 +72,9 @@ export default function Navbar() {
             </Link>
             <Link href="#testimonials" className="block text-slate-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
               Testimonials
+            </Link>
+            <Link href="/client/login" className="block text-slate-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
+              Login
             </Link>
             <Button asChild className="w-full">
               <Link href="#booking" onClick={() => setIsOpen(false)}>Book Consultation</Link>
